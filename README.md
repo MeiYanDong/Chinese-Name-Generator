@@ -12,9 +12,6 @@ A web application that helps non-Chinese speakers generate culturally meaningful
   - Christmas: Festive holiday theme with green and red accents
 - **Responsive Design**: Works seamlessly on both desktop and mobile devices
 
-## Live Demo
-
-Try the generator now: [Chinese Name Generator](https://chinese-name-generator.vercel.app/)
 
 ## How to Use
 

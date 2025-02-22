@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Name Generator</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/default.css">
+    <link rel="stylesheet" href="styles/spring-festival.css">
+    <link rel="stylesheet" href="styles/christmas.css">
+</head>
+<body class="theme-default">
+    <div class="theme-switcher">
+        <button class="theme-btn active" data-theme="default">default</button>
+        <button class="theme-btn" data-theme="spring-festival">spring-festival</button>
+        <button class="theme-btn" data-theme="christmas">christmas</button>
+    </div>
+    <h1>Chinese Name Generator</h1>
+    <div class="input-section">
+        <input type="text" id="englishName" placeholder="Enter your English name">
+        <button id="generateBtn" onclick="generateNames()">Generate Names</button>
+    </div>
+    <div id="loading" class="loading">Generating interesting Chinese names...</div>
+    <div id="results" class="results"></div>
+
+    <script>
+        // 主题切换功能
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const theme = btn.dataset.theme;
+                document.body.className = `theme-${theme}`;
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        async function generateNames() {
+            const englishName = document.getElementById('englishName').value.trim();
+            if (!englishName) {
+                alert('Please enter your English name');
+                return;
+            }
+
+            const generateBtn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+
+            generateBtn.disabled = true;
+            loading.style.display = 'block';
+            results.innerHTML = '';
+
+            try {
+                const response = await fetch('http://localhost:3001/generate-names', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ englishName })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                displayResults(data.names);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to generate names. Please try again.');
+            } finally {
+                generateBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+
+        function displayResults(names) {
+            const results = document.getElementById('results');
+            results.innerHTML = names.map(name => `
+                <div class="name-card">
+                    <div class="chinese-name">${name.chinese}</div>
+                    <div class="meaning">${name.chineseMeaning}</div>
+                    <div class="english-meaning">${name.englishMeaning}</div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
